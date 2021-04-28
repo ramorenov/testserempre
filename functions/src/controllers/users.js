@@ -69,4 +69,22 @@ module.exports = {
       });
     }
   },
+
+  async deleteUserById(req, res, next) {
+    try {
+      const id = req.params.id;
+      response = await services.deleteUserById(id);
+      response.failed
+        ? next(response)
+        : res.status(200).json({
+            message: 'El usuario se borro con éxito',
+            data: response,
+          });
+    } catch (err) {
+      next({
+        status: 400,
+        message: err.toString(),
+      });
+    }
+  },
 };

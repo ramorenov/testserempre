@@ -77,4 +77,18 @@ module.exports = {
       };
     }
   },
+
+  async deleteUserById(id) {
+    try {
+      const refUser = db.collection('users').doc(id);
+      const response = await refUser.delete();
+      return response;
+    } catch (err) {
+      return {
+        failed: true,
+        status: 500,
+        message: err.toString(),
+      };
+    }
+  },
 };
