@@ -22,4 +22,16 @@ module.exports = {
       });
     }
   },
+
+  async getUsers(req, res, next) {
+    try {
+      response = await services.getUsers();
+      response.failed ? next(response) : res.status(200).json(response);
+    } catch (err) {
+      next({
+        status: 400,
+        message: err.toString(),
+      });
+    }
+  },
 };

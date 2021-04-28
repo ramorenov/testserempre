@@ -16,4 +16,27 @@ module.exports = {
       };
     }
   },
+
+  async getUsers() {
+    try {
+      const refUser = db.collection('users');
+      const snapshot = await refUser.get();
+      if (snapshot.empty) {
+        throw new Error('No se encontraron usuarios.');
+      }
+      const docs = snapshot.docs;
+      const response = docs.map((doc) => ({
+        id: doc.id,
+        name: doc.data().name,
+        email: doc.data().email,
+      }));
+      return response;
+    } catch (err) {
+      return {
+        failed: true,
+        status: 500,
+        message: err.toString(),
+      };
+    }
+  },
 };
