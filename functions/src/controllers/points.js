@@ -4,15 +4,17 @@ const validate = require('../utils/JoiVerify/joiValidate');
 module.exports = {
   async createPoints(req, res, next) {
     try {
-      const user = validate.validatePointsCreate(req.body);
-      if (user.failed) {
-        next(user);
+      const uid = req.query.uid;
+      const points = validate.validatePointsCreate(req.body);
+      if (points.failed) {
+        next(points);
+        return;
       }
-      response = await services.createPoints(user);
+      response = await services.createPoints(uid, points);
       response.failed
         ? next(response)
         : res.status(201).json({
-            message: 'El usuario se creo con éxito',
+            message: 'El puntaje se creo con éxito',
             data: response,
           });
     } catch (err) {
@@ -25,7 +27,8 @@ module.exports = {
 
   async getPoints(req, res, next) {
     try {
-      response = await services.getPoints();
+      const uid = req.query.uid;
+      response = await services.getPoints(uid);
       response.failed ? next(response) : res.status(200).json(response);
     } catch (err) {
       next({
@@ -37,8 +40,9 @@ module.exports = {
 
   async getPointsById(req, res, next) {
     try {
-      const id = req.params.id;
-      response = await services.getPointsById(id);
+      const uid = req.query.uid;
+      const pid = req.query.pid;
+      response = await services.getPointsById(uid, pid);
       response.failed ? next(response) : res.status(200).json(response);
     } catch (err) {
       next({
@@ -50,16 +54,17 @@ module.exports = {
 
   async updatePointsById(req, res, next) {
     try {
-      const id = req.params.id;
-      const user = validate.validatePointsUpdate(req.body);
-      if (user.failed) {
-        next(user);
+      const uid = req.query.uid;
+      const pid = req.query.pid;
+      const points = validate.validatePointsUpdate(req.body);
+      if (points.failed) {
+        next(points);
       }
-      response = await services.updatePointsById(id, user);
+      response = await services.updatePointsById(uid, pid, points);
       response.failed
         ? next(response)
         : res.status(200).json({
-            message: 'El usuario se actualizo con éxito',
+            message: 'El puntaje se actualizo con éxito',
             data: response,
           });
     } catch (err) {
@@ -72,12 +77,13 @@ module.exports = {
 
   async deletePointsById(req, res, next) {
     try {
-      const id = req.params.id;
-      response = await services.deletePointsById(id);
+      const uid = req.query.uid;
+      const pid = req.query.pid;
+      response = await services.deletePointsById(uid, pid);
       response.failed
         ? next(response)
         : res.status(200).json({
-            message: 'El usuario se borro con éxito',
+            message: 'El puntaje se borro con éxito',
             data: response,
           });
     } catch (err) {

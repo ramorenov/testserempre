@@ -26,13 +26,13 @@ module.exports = {
   },
 
   validatePointsCreate(data) {
-    const value = schema.userCreate.validate(data);
+    const value = schema.pointsCreate.validate(data);
     const response = responseValidation(value);
     return response;
   },
 
   validatePointsUpdate(data) {
-    const value = schema.userUpdate.validate(data);
+    const value = schema.pointsUpdate.validate(data);
     const response = responseValidation(value);
     return response;
   },

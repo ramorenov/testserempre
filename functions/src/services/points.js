@@ -2,11 +2,15 @@ const md5 = require('md5');
 const { db } = require('../config/firebase');
 
 module.exports = {
-  async createPoints(user) {
+  async createPoints(uid, points) {
     try {
-      user.password = md5(user.password);
-      const refPoints = db.collection('points').doc();
-      const response = await refPoints.create(user);
+      const refUser = db.collection('users').doc(uid);
+      const doc = await refUser.get();
+      if (!doc.exists) {
+        throw new Error('No se encontró el usuario.');
+      }
+      const refPoints = db.collection('users').doc(uid).collection('points').doc();
+      const response = await refPoints.create(points);
       return response;
     } catch (err) {
       return {
@@ -17,18 +21,22 @@ module.exports = {
     }
   },
 
-  async getPoints() {
+  async getPoints(uid) {
     try {
-      const refPoints = db.collection('points');
+      const refUser = db.collection('users').doc(uid);
+      const doc = await refUser.get();
+      if (!doc.exists) {
+        throw new Error('No se encontró el usuario.');
+      }
+      const refPoints = db.collection('users').doc(uid).collection('points');
       const snapshot = await refPoints.get();
       if (snapshot.empty) {
-        throw new Error('No se encontraron usuarios.');
+        throw new Error('No se encontraron puntos.');
       }
       const docs = snapshot.docs;
       const response = docs.map((doc) => ({
         id: doc.id,
-        name: doc.data().name,
-        email: doc.data().email,
+        ...doc.data(),
       }));
       return response;
     } catch (err) {
@@ -40,15 +48,20 @@ module.exports = {
     }
   },
 
-  async getPointsById(id) {
+  async getPointsById(uid, pid) {
     try {
-      const refPoints = db.collection('points').doc(id);
-      const doc = await refPoints.get();
-      if (doc.empty) {
-        throw new Error('No se el usuario.');
+      const refUser = db.collection('users').doc(uid);
+      const docUser = await refUser.get();
+      if (!docUser.exists) {
+        console.log('error de usuario');
+        throw new Error('No se encontró el usuario.');
       }
-      const response = doc.data();
-      delete response.password;
+      const refPoints = refUser.collection('points').doc(pid);
+      const docPoints = await refPoints.get();
+      if (!docPoints.exists) {
+        throw new Error('No se encontró puntaje.');
+      }
+      const response = docPoints.data();
       return response;
     } catch (err) {
       return {
@@ -59,14 +72,21 @@ module.exports = {
     }
   },
 
-  async updatePointsById(id, user) {
+  async updatePointsById(uid, pid, points) {
     try {
-      if (user.password) {
-        user.password = md5(user.password);
+      const refUser = db.collection('users').doc(uid);
+      const docUser = await refUser.get();
+      if (!docUser.exists) {
+        console.log('error de usuario');
+        throw new Error('No se encontró el usuario.');
       }
-      const refPoints = db.collection('points').doc(id);
+      const refPoints = refUser.collection('points').doc(pid);
+      const docPoints = await refPoints.get();
+      if (!docPoints.exists) {
+        throw new Error('No se encontró puntaje.');
+      }
       const response = await refPoints.update({
-        ...user,
+        ...points,
       });
       return response;
     } catch (err) {
@@ -78,9 +98,19 @@ module.exports = {
     }
   },
 
-  async deletePointsById(id) {
+  async deletePointsById(uid, pid) {
     try {
-      const refPoints = db.collection('points').doc(id);
+      const refUser = db.collection('users').doc(uid);
+      const docUser = await refUser.get();
+      if (!docUser.exists) {
+        console.log('error de usuario');
+        throw new Error('No se encontró el usuario.');
+      }
+      const refPoints = refUser.collection('points').doc(pid);
+      const docPoints = await refPoints.get();
+      if (!docPoints.exists) {
+        throw new Error('No se encontró puntaje.');
+      }
       const response = await refPoints.delete();
       return response;
     } catch (err) {

@@ -45,7 +45,7 @@ module.exports = {
       const refUser = db.collection('users').doc(id);
       const doc = await refUser.get();
       if (doc.empty) {
-        throw new Error('No se el usuario.');
+        throw new Error('No se encuentra el usuario.');
       }
       const response = doc.data();
       delete response.password;
