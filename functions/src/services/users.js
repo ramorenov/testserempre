@@ -39,4 +39,23 @@ module.exports = {
       };
     }
   },
+
+  async getUserById(id) {
+    try {
+      const refUser = db.collection('users').doc(id);
+      const doc = await refUser.get();
+      if (doc.empty) {
+        throw new Error('No se el usuario.');
+      }
+      const response = doc.data();
+      delete response.password;
+      return response;
+    } catch (err) {
+      return {
+        failed: true,
+        status: 500,
+        message: err.toString(),
+      };
+    }
+  },
 };

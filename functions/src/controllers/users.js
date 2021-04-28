@@ -34,4 +34,17 @@ module.exports = {
       });
     }
   },
+
+  async getUserById(req, res, next) {
+    try {
+      const id = req.params.id;
+      response = await services.getUserById(id);
+      response.failed ? next(response) : res.status(200).json(response);
+    } catch (err) {
+      next({
+        status: 400,
+        message: err.toString(),
+      });
+    }
+  },
 };
