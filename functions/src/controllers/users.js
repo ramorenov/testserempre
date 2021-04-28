@@ -47,4 +47,26 @@ module.exports = {
       });
     }
   },
+
+  async updateUserById(req, res, next) {
+    try {
+      const id = req.params.id;
+      const user = validate.validateUserUpdate(req.body);
+      if (user.failed) {
+        next(user);
+      }
+      response = await services.updateUserById(id, user);
+      response.failed
+        ? next(response)
+        : res.status(200).json({
+            message: 'El usuario se actualizo con éxito',
+            data: response,
+          });
+    } catch (err) {
+      next({
+        status: 400,
+        message: err.toString(),
+      });
+    }
+  },
 };

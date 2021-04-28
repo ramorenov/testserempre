@@ -58,4 +58,23 @@ module.exports = {
       };
     }
   },
+
+  async updateUserById(id, user) {
+    try {
+      if (user.password) {
+        user.password = md5(user.password);
+      }
+      const refUser = db.collection('users').doc(id);
+      const response = await refUser.update({
+        ...user,
+      });
+      return response;
+    } catch (err) {
+      return {
+        failed: true,
+        status: 500,
+        message: err.toString(),
+      };
+    }
+  },
 };
