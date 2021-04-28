@@ -24,4 +24,16 @@ module.exports = {
     const response = responseValidation(value);
     return response;
   },
+
+  validatePointsCreate(data) {
+    const value = schema.userCreate.validate(data);
+    const response = responseValidation(value);
+    return response;
+  },
+
+  validatePointsUpdate(data) {
+    const value = schema.userUpdate.validate(data);
+    const response = responseValidation(value);
+    return response;
+  },
 };

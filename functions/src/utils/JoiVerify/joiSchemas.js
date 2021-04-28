@@ -12,4 +12,14 @@ module.exports = {
     email: Joi.string().email({ minDomainSegments: 2 }).required().label('Ingrese un nombre de usuario válido'),
     password: Joi.string().min(6).max(30).label('La contraseña debe tener minimo 6 caracteres y maximo 30'),
   }),
+
+  pointsCreate: Joi.object({
+    quantity: Joi.number().required().label('Ingrese un numero de puntos'),
+    reason: Joi.string().required().label('Ingrese el motivo de puntaje'),
+  }),
+
+  pointsUpdate: Joi.object({
+    quantity: Joi.number().label('Ingrese un numero de puntos'),
+    reason: Joi.string().required().label('Ingrese el motivo de puntaje'),
+  }),
 };
