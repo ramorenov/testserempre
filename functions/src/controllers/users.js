@@ -7,9 +7,10 @@ module.exports = {
       const user = validate.validateUserCreate(req.body);
       if (user.failed) {
         next(user);
+        return;
       }
       response = await services.createUser(user);
-      response.failed
+      return response.failed
         ? next(response)
         : res.status(201).json({
             message: 'El usuario se creo con éxito',
@@ -20,18 +21,20 @@ module.exports = {
         status: 400,
         message: err.toString(),
       });
+      return;
     }
   },
 
   async getUsers(req, res, next) {
     try {
       response = await services.getUsers();
-      response.failed ? next(response) : res.status(200).json(response);
+      return response.failed ? next(response) : res.status(200).json(response);
     } catch (err) {
       next({
         status: 400,
         message: err.toString(),
       });
+      return;
     }
   },
 
@@ -39,12 +42,13 @@ module.exports = {
     try {
       const id = req.params.id;
       response = await services.getUserById(id);
-      response.failed ? next(response) : res.status(200).json(response);
+      return response.failed ? next(response) : res.status(200).json(response);
     } catch (err) {
       next({
         status: 400,
         message: err.toString(),
       });
+      return;
     }
   },
 
@@ -54,9 +58,10 @@ module.exports = {
       const user = validate.validateUserUpdate(req.body);
       if (user.failed) {
         next(user);
+        return;
       }
       response = await services.updateUserById(id, user);
-      response.failed
+      return response.failed
         ? next(response)
         : res.status(200).json({
             message: 'El usuario se actualizo con éxito',
@@ -67,6 +72,7 @@ module.exports = {
         status: 400,
         message: err.toString(),
       });
+      return;
     }
   },
 
@@ -74,7 +80,7 @@ module.exports = {
     try {
       const id = req.params.id;
       response = await services.deleteUserById(id);
-      response.failed
+      return response.failed
         ? next(response)
         : res.status(200).json({
             message: 'El usuario se borro con éxito',
@@ -85,6 +91,7 @@ module.exports = {
         status: 400,
         message: err.toString(),
       });
+      return;
     }
   },
 };

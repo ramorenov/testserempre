@@ -1,4 +1,3 @@
-const md5 = require('md5');
 const { db } = require('../config/firebase');
 
 module.exports = {
