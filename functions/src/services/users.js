@@ -61,10 +61,14 @@ module.exports = {
 
   async updateUserById(id, user) {
     try {
+      const refUser = db.collection('users').doc(id);
+      const doc = await refUser.get();
+      if (!doc.exists) {
+        throw new Error('No se encontró el usuario.');
+      }
       if (user.password) {
         user.password = md5(user.password);
       }
-      const refUser = db.collection('users').doc(id);
       const response = await refUser.update({
         ...user,
       });
@@ -81,6 +85,10 @@ module.exports = {
   async deleteUserById(id) {
     try {
       const refUser = db.collection('users').doc(id);
+      const doc = await refUser.get();
+      if (!doc.exists) {
+        throw new Error('No se encontró el usuario.');
+      }
       const response = await refUser.delete();
       return response;
     } catch (err) {
